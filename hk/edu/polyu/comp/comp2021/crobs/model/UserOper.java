@@ -11,13 +11,14 @@ public class UserOper{
         users.put(Superadmin.getUserId(), Superadmin);
     }
 
-    public boolean hasPermission(int level){
-        if (this.currentUserId == null){
+    public boolean hasPermission(int level){  //hasPermission(2) means check if the user is admin or superadmin
+        if (this.currentUserId == null){      //hasPermission(3) means check if the user is superadmin
             return false;
         }
         int currentLevel = users.get(this.currentUserId).getRole().getLevel();
         return currentLevel >= level;
     }
+
     public void login(String userId){
         if (!users.containsKey(userId)) {
             System.out.println("No such user");
