@@ -18,23 +18,56 @@ public class BookingManager{
         this.bookingList = bookingList;
     }
 
+    // Checklist #5: Connect BookingManager to RoomManager
     public void setRoomManager(RoomManager roomManager) {
         this.roomManager = roomManager;
     }
 
+    // Checklist #5: Call roomManager.roomExists(roomId)
     public boolean roomExists(String roomId) {
-        if (roomManager == null) {
+        if (roomId == null || roomManager == null) {
             return false;
         }
-
         return roomManager.roomExists(roomId);
     }
 
+    // Checklist #3 (REQ3 Helper): Remove all bookings for a deleted user
+    public void cancelBookingsByUser(String userId) {
+        if (userId == null) {
+            return;
+        }
+        for (int i = bookingList.size() - 1; i >= 0; i--) {
+            if (userId.equals(bookingList.get(i).getUserId())) {
+                bookingList.remove(i);
+            }
+        }
+    }
+
+    // Checklist #4 (REQ9 Helper A): Return all bookings
     public List<Booking> getAllBookings() {
         return new ArrayList<>(bookingList);
     }
 
+    // Checklist #4 (REQ9 Helper B): Cancel future bookings for a deleted room
+    public void cancelFutureBookingsByRoom(String roomId) {
+        if (roomId == null) {
+            return;
+        }
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
 
+        for (int i = bookingList.size() - 1; i >= 0; i--) {
+            Booking booking = bookingList.get(i);
+            if (roomId.equals(booking.getRoomId())) {
+                boolean isFutureDate = booking.getDate().isAfter(today);
+                boolean isLaterToday = booking.getDate().isEqual(today) && booking.getStartTime().isAfter(now);
+                if (isFutureDate || isLaterToday) {
+                    bookingList.remove(i);
+                }
+            }
+        }
+    }
+    
     //REQ10
     public String createBooking(String userId, String roomId, LocalDate date, LocalTime startTime, LocalTime endTime, String purpose){
         if (userId == null || userId.trim().equals("")) {
