@@ -80,12 +80,15 @@ public class RoomManager {
 
     public Room findRoom(String roomId) {
 
-        for (int i= 0 ; i<rooms. size(); i++) {
-            Room. room= rooms.get(i);
-            if (room.get(i).equals(roomId)) {
+        for (int i = 0; i < rooms.size(); i++) {
+
+            Room room = rooms.get(i);
+
+            if (room.getRoomId().equals(roomId)) {
                 return room;
             }
         }
+
         return null;
     }
 
@@ -161,7 +164,7 @@ public class RoomManager {
         }
         Room room = findRoom(roomId);
         if (room== null) {
-            return "Error: Invalid room type.";
+            return "Error: Room not found.";
 
         }
         List<Booking> allBookings = bookings.getAllBookings();
