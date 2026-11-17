@@ -1,3 +1,5 @@
+package hk.edu.polyu.comp.comp2021.crobs.model;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ public class BookingManager{
         return !roomId.trim().equals("");
     }
 
+    public List<Booking> getAllBookings() {
+        return new ArrayList<>(bookingList);
+    }
+
     //REQ10
     public String createBooking(String userId, String roomId, LocalDate date, LocalTime startTime, LocalTime endTime, String purpose){
         if (userId == null || userId.trim().equals("")) {
@@ -28,7 +34,7 @@ public class BookingManager{
             return "Error: Start time must be before end time.";
         }
         if (purpose == null || purpose.trim().equals("")) {
-            return "Error: Booking purpose is empty.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking purpose is empty.";
         }
         if (roomId == null || !roomExists(roomId)) { //Need roomExists function
            return "Error: RoomID " + roomId + " does not exist.";
@@ -36,7 +42,7 @@ public class BookingManager{
 
         for (Booking booking: bookingList){
             if (booking.hasConflict(roomId, date, startTime, endTime)){
-                return "Error: Booking conflict. The room is already booked during this time slot.";
+                return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking conflict. The room is already booked during this time slot.";
             }
         }
 
@@ -44,7 +50,7 @@ public class BookingManager{
         Booking newBooking = new Booking(bookingId, userId, roomId, date, startTime, endTime, purpose.trim());
         this.bookingList.add(newBooking);
 
-        return "Booking created. ID: " + bookingId;
+        return "hk.edu.polyu.comp.comp2021.crobs.model.Booking created. ID: " + bookingId;
     }
 
     //REQ11
@@ -53,13 +59,13 @@ public class BookingManager{
             return "Error: You must be logged in to modify a booking.";
         }
         if (bookingId == null || bookingId.trim().equals("")) {
-            return "Error: Booking ID is empty.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking ID is empty.";
         }
         if (date == null || startTime == null || endTime == null || !startTime.isBefore(endTime)) {
             return "Error: Start time must be before end time.";
         }
         if (purpose == null || purpose.trim().equals("")) {
-            return "Error: Booking purpose is empty.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking purpose is empty.";
         }
         if (roomId == null || !roomExists(roomId)) { //Need roomExists function
            return "Error: RoomID " + roomId + " does not exist.";
@@ -75,7 +81,7 @@ public class BookingManager{
         }
 
         if (targetBooking == null) {
-            return "Error: Booking ID: " + bookingId + " does not exist.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking ID: " + bookingId + " does not exist.";
         }
 
         //Verify userID
@@ -98,7 +104,7 @@ public class BookingManager{
         targetBooking.setEndTime(endTime);
         targetBooking.setPurpose(purpose.trim());
 
-        return "Success: Booking " + bookingId + " has been modified.";
+        return "Success: hk.edu.polyu.comp.comp2021.crobs.model.Booking " + bookingId + " has been modified.";
     }
 
     //REQ12
@@ -107,7 +113,7 @@ public class BookingManager{
             return "Error: You must be logged in to delete a booking.";
         }
         if (bookingId == null || bookingId.trim().equals("")) {
-            return "Error: Booking ID cannot be empty.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking ID cannot be empty.";
         }
 
         Booking targetBooking = null;
@@ -119,7 +125,7 @@ public class BookingManager{
         }
 
         if (targetBooking == null) {
-            return "Error: Booking ID: " + bookingId + " does not exist.";
+            return "Error: hk.edu.polyu.comp.comp2021.crobs.model.Booking ID: " + bookingId + " does not exist.";
         }
 
         if (!targetBooking.getUserId().equals(userId)) {
@@ -164,8 +170,8 @@ public class BookingManager{
 
         StringBuilder display = new StringBuilder();
         for (Booking booking : userBookings) {
-            display.append("Booking ID: ").append(booking.getBookingId())
-                   .append(", Room ID: ").append(booking.getRoomId())
+            display.append("hk.edu.polyu.comp.comp2021.crobs.model.Booking ID: ").append(booking.getBookingId())
+                   .append(", hk.edu.polyu.comp.comp2021.crobs.model.Room ID: ").append(booking.getRoomId())
                    .append(", Date: ").append(booking.getDate())
                    .append(", Time: ").append(booking.getStartTime()).append(" - ").append(booking.getEndTime())
                    .append(", Purpose: ").append(booking.getPurpose())
@@ -228,7 +234,7 @@ public class BookingManager{
                 displayedUsers = "N/A";
             }
 
-            display.append("Booking ID: ").append(booking.getBookingId())
+            display.append("hk.edu.polyu.comp.comp2021.crobs.model.Booking ID: ").append(booking.getBookingId())
               .append(", Date: ").append(booking.getDate())
               .append(", Time: ").append(booking.getStartTime()).append(" - ").append(booking.getEndTime())
               .append(", User ID: ").append(displayedUsers)

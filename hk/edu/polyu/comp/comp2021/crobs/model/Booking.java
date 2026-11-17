@@ -1,7 +1,8 @@
+package hk.edu.polyu.comp.comp2021.crobs.model;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class Booking{
     private String bookingID;
@@ -24,9 +25,9 @@ public class Booking{
 
     public void getbooking(){
         System.out.println(
-            "Booking ID: " + bookingID 
+            "hk.edu.polyu.comp.comp2021.crobs.model.Booking ID: " + bookingID
             + "\nUser ID: " + userID
-            + "\nRoom ID: " + roomID
+            + "\nhk.edu.polyu.comp.comp2021.crobs.model.Room ID: " + roomID
             + "\nDate of booking: " + date
             + "\nStart Time: " + startTime
             + "\nEnd Time: " + endTime
