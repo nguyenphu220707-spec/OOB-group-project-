@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingManager{
+    private RoomManager roomManager;
     private List<Booking> bookingList;
     private int idCount = 1;
 
@@ -17,13 +18,22 @@ public class BookingManager{
         this.bookingList = bookingList;
     }
 
-    public boolean roomExists(String roomId) { //Placeholder for roomExist function
-        return !roomId.trim().equals("");
+    public void setRoomManager(RoomManager roomManager) {
+        this.roomManager = roomManager;
+    }
+
+    public boolean roomExists(String roomId) {
+        if (roomManager == null) {
+            return false;
+        }
+
+        return roomManager.roomExists(roomId);
     }
 
     public List<Booking> getAllBookings() {
         return new ArrayList<>(bookingList);
     }
+
 
     //REQ10
     public String createBooking(String userId, String roomId, LocalDate date, LocalTime startTime, LocalTime endTime, String purpose){

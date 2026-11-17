@@ -38,14 +38,13 @@ public class RoomManager {
     private boolean validRoomType(String type) {
 
         return "lectureTheatre". equals(type)
-                ||  " computerLab". equals(type)
+                ||  "computerLab". equals(type)
                 || "seminarRoom". equals(type)
                 || "meetingRoom". equals(type);
 
     }
 
     private boolean validFeatures(String features) {
-
             if (features == null || features.isEmpty()) {
                 return false;
             }
@@ -76,7 +75,6 @@ public class RoomManager {
 
         return result;
     }
-
 
     public Room findRoom(String roomId) {
 
