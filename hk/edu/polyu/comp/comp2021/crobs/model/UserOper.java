@@ -26,6 +26,7 @@ public class UserOper {
         return currentLevel >= level;
     }
 
+    //REQ 5
     public void login(String userId) {
         if (userId == null || !users.containsKey(userId)) {
             System.out.println("No such user");
@@ -38,6 +39,7 @@ public class UserOper {
         this.currentUserId = userId;
     }
 
+    //REQ 6
     public void logout() {
         if (currentUserId == null) {
             System.out.println("No one is logging in!");
