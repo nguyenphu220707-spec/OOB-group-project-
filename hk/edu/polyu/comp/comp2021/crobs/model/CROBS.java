@@ -247,7 +247,7 @@ public class CROBS {
         }
     }
 
-
+    //REQ 1
     public void saveLogs() {
         if (txtPath != null) {
             try (PrintWriter txtWriter = new PrintWriter(new FileWriter(txtPath))) {
