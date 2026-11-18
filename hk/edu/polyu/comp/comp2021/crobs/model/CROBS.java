@@ -10,16 +10,19 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
-
+import java.util.Stack;
 
 public class CROBS {
-    private final UserOper userOper;
-    private final RoomManager roomManager;
-    private final BookingManager bookingManager;
+    private UserOper userOper;
+    private RoomManager roomManager;
+    private BookingManager bookingManager;
 
     private String htmlPath;
     private String txtPath;
     private final List<String> commandHistory = new ArrayList<>();
+
+    private final List<String> undoableCommands = new ArrayList<>();
+    private final Stack<String> redoStack = new Stack<>();
 
     public CROBS() {
         this.userOper = new UserOper();
@@ -71,7 +74,7 @@ public class CROBS {
         saveLogs();
     }
 
-    public void executeCommand(String line) {
+    private void executeCommandInternal(String line) {
         String[] parts = line.split("\\s+");
         String cmd = parts[0];
 
@@ -247,7 +250,43 @@ public class CROBS {
         }
     }
 
-    //REQ 1
+    public void executeCommand(String line) {
+        String[] parts = line.split("\\s+");
+        String cmd = parts[0];
+
+        if ("undo".equals(cmd)) {
+            if (undoableCommands.isEmpty()) {
+                System.out.println("Nothing to undo.");
+            } else {
+                String last = undoableCommands.remove(undoableCommands.size() - 1);
+                redoStack.push(last);
+                replayCommands();
+                System.out.println("Undid: " + last);
+            }
+            return;
+        }
+
+        if ("redo".equals(cmd)) {
+            if (redoStack.isEmpty()) {
+                System.out.println("Nothing to redo.");
+            } else {
+                String next = redoStack.pop();
+                undoableCommands.add(next);
+                replayCommands();
+                System.out.println("Redid: " + next);
+            }
+            return;
+        }
+
+        if (isUndoable(cmd)) {
+            undoableCommands.add(line);
+            redoStack.clear();
+        }
+
+        executeCommandInternal(line);
+    }
+
+
     public void saveLogs() {
         if (txtPath != null) {
             try (PrintWriter txtWriter = new PrintWriter(new FileWriter(txtPath))) {
@@ -271,6 +310,38 @@ public class CROBS {
                 System.out.println("Failed to write HTML log: " + e.getMessage());
             }
         }
+    }
+
+    private boolean isUndoable(String cmd) {
+        return "addUser".equals(cmd) || "removeUser".equals(cmd) || "changeRole".equals(cmd)
+                || "addRoom".equals(cmd) || "modifyRoom".equals(cmd) || "deleteRoom".equals(cmd)
+                || "createBooking".equals(cmd) || "modifyBooking".equals(cmd) || "deleteBooking".equals(cmd);
+    }
+
+    private void replayCommands() {
+        String savedUser = userOper.getCurrentUserId();
+        this.userOper = new UserOper();
+        this.bookingManager = new BookingManager();
+        this.roomManager = new RoomManager(userOper, bookingManager);
+        this.userOper.setBookingManager(bookingManager);
+        this.bookingManager.setRoomManager(roomManager);
+        if (savedUser != null) {
+            userOper.login(savedUser);
+        }
+        // Replay all undoable commands silently
+        java.io.PrintStream originalOut = System.out;
+        System.setOut(new java.io.PrintStream(new java.io.OutputStream() {
+            @Override public void write(int b) {}
+        }));
+        try {
+            for (String c : undoableCommands) {
+                executeCommandInternal(c);
+            }
+        } finally {
+            System.setOut(originalOut);
+        }
+
+
     }
 
     public UserOper getUserOper() {
