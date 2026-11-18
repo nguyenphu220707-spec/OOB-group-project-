@@ -46,6 +46,7 @@ public class UserOper {
         this.currentUserId = null;
     }
 
+    //REQ 2
     public void addUser(String name) {
         if (!hasPermission(2)) {
             System.out.println("You don't have the permission to add new user!");
@@ -59,6 +60,7 @@ public class UserOper {
         users.put(newUser.getUserId(), newUser);
     }
 
+    //REQ 3
     public void removeUser(String userId) {
         if (!hasPermission(2)) {
             System.out.println("You don't have the permission to remove user!");
@@ -78,6 +80,7 @@ public class UserOper {
         }
     }
 
+    //REQ 4
     public void changeRole(String userId, Role newRole) {
         if (!hasPermission(3)) {
             System.out.println("You are not allowed to change your role");
