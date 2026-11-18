@@ -154,31 +154,27 @@ public class RoomManager {
 
         return "Room modified successfully!";
     }
-    // REQ9: Delete a room
+
     public String deleteRoom(String roomId) {
 
         if (!isAdmin()) {
             return "Error: Admin permission required.";
         }
+
         Room room = findRoom(roomId);
-        if (room== null) {
+
+        if (room == null) {
             return "Error: Room not found.";
-
         }
-        List<Booking> allBookings = bookings.getAllBookings();
 
-        for (int i = 0; i < allBookings.size(); i++) {
 
-            Booking booking = allBookings.get(i);
-
-            if (roomId.equals(booking.getRoomId())) {
-                return "Error: Cannot delete a room with existing bookings.";
-            }
-        }
+        bookings.cancelFutureBookingsByRoom(roomId);
 
         rooms.remove(room);
+
         return "Room deleted successfully!";
     }
+
     // REQ15: Display one room
     public String listRoom(String roomId) {
 

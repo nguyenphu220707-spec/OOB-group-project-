@@ -266,4 +266,18 @@ public class BookingManager{
 
         return display.toString().trim();
     }
+    public void cancelFutureBookingsByRoom(String roomId) {
+        LocalDate today = LocalDate.now();
+
+        for (int i = bookingList.size() - 1; i >= 0; i--) {
+            Booking booking = bookingList.get(i);
+
+            if (roomId.equals(booking.getRoomId())
+                    && booking.getDate() != null
+                    && !booking.getDate().isBefore(today)) {
+
+                bookingList.remove(i);
+            }
+        }
+    }
 }
