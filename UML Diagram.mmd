@@ -1,0 +1,185 @@
+classDiagram
+    namespace crobs {
+        class Application {
+            +main(args: String[])$ void
+        }
+    }
+
+    namespace crobs_view {
+        class JFrame {
+            <<external>>
+        }
+        class CROBSGUI {
+            -crobs: CROBS
+            -statusLabel: JLabel
+            -outputArea: JTextArea
+            -rawCommandField: JTextField
+            +CROBSGUI(args: String[])
+            -createUserPanel() JPanel
+            -createRoomPanel() JPanel
+            -createBookingPanel() JPanel
+            -runCommand(cmd: String) void
+            -updateStatusLabel() void
+            -quitApplication() void
+            +launch(args: String[])$ void
+            +main(args: String[])$ void
+        }
+    }
+
+    namespace crobs_model {
+        class CROBS {
+            -userOper: UserOper
+            -roomManager: RoomManager
+            -bookingManager: BookingManager
+            -htmlPath: String
+            -txtPath: String
+            -commandHistory: List~String~
+            -undoableCommands: List~String~
+            -redoStack: Stack~String~
+            +CROBS()
+            +parseArgs(args: String[]) void
+            +start(args: String[]) void
+            +recordCommand(command: String) void
+            +executeCommand(line: String) void
+            -executeCommandInternal(line: String) void
+            +saveLogs() void
+            -isUndoable(cmd: String) boolean
+            -replayCommands() void
+            +getUserOper() UserOper
+            +getRoomManager() RoomManager
+            +getBookingManager() BookingManager
+            +getCommandHistory() List~String~
+        }
+
+        class UserOper {
+            -currentUserId: String
+            -users: HashMap~String, User~
+            +userCnt: int
+            -bookingManager: BookingManager
+            +UserOper()
+            +setBookingManager(bookingManager: BookingManager) void
+            +hasPermission(level: int) boolean
+            +login(userId: String) void
+            +logout() void
+            +addUser(name: String) void
+            +removeUser(userId: String) void
+            +changeRole(userId: String, newRole: Role) void
+            +getCurrentUserId() String
+        }
+
+        class User {
+            -userId: String
+            -name: String
+            -role: Role
+            +User(userId: String, name: String, role: Role)
+            +getUserId() String
+            +getName() String
+            +getRole() Role
+            +setRole(role: Role) void
+        }
+
+        class Role {
+            <<enumeration>>
+            regular(1)
+            admin(2)
+            superadmin(3)
+            -level: int
+            -Role(level: int)
+            +getLevel() int
+        }
+
+        class RoomManager {
+            -rooms: List~Room~
+            -nextRoomId: int
+            -users: UserOper
+            -bookings: BookingManager
+            +RoomManager(users: UserOper, bookings: BookingManager)
+            -isAdmin() boolean
+            -validRoomType(type: String) boolean
+            -validFeatures(features: String) boolean
+            -parseFeatures(features: String) Set~String~
+            +findRoom(roomId: String) Room
+            +roomExists(roomId: String) boolean
+            +addRoom(roomType: String, capacity: int, features: String) String
+            +modifyRoom(roomId: String, roomType: String, capacity: int, features: String) String
+            +deleteRoom(roomId: String) String
+            +listRoom(roomId: String) String
+            +listAllRooms() String
+            -formatRoom(room: Room) String
+            +searchAvailableRooms(date: LocalDate, startTime: LocalTime, endTime: LocalTime, minCapacity: int, requiredFeatures: String) String
+        }
+
+        class Room {
+            -roomId: String
+            -roomType: String
+            -capacity: int
+            -features: Set~String~
+            +Room(roomId: String, roomType: String, capacity: int, features: Set~String~)
+            +getRoomId() String
+            +getRoomType() String
+            +getCapacity() int
+            +getFeatures() Set~String~
+            +setRoomType(roomType: String) void
+            +setCapacity(capacity: int) void
+            +setFeatures(features: Set~String~) void
+        }
+
+        class BookingManager {
+            -roomManager: RoomManager
+            -bookingList: List~Booking~
+            -idCount: int
+            +BookingManager()
+            +BookingManager(bookingList: List~Booking~)
+            +setRoomManager(roomManager: RoomManager) void
+            +roomExists(roomId: String) boolean
+            +getAllBookings() List~Booking~
+            +cancelBookingsByUser(userId: String) void
+            +createBooking(userId: String, roomId: String, date: LocalDate, startTime: LocalTime, endTime: LocalTime, purpose: String) String
+            +modifyBooking(userId: String, bookingId: String, roomId: String, date: LocalDate, startTime: LocalTime, endTime: LocalTime, purpose: String) String
+            +deleteBooking(userId: String, bookingId: String) String
+            +listBookings(userId: String) List~Booking~
+            +getListBookingsString(userId: String) String
+            +getWeeklySchedule(roomId: String, weekStartDate: LocalDate) List~Booking~
+            +getWeeklyScheduleString(userId: String, isAdmin: boolean, roomId: String, weekStartDate: LocalDate) String
+        }
+
+        class Booking {
+            -bookingID: String
+            -userID: String
+            -roomID: String
+            -date: LocalDate
+            -startTime: LocalTime
+            -endTime: LocalTime
+            -purpose: String
+            +Booking(bookingID: String, userID: String, roomID: String, date: LocalDate, startTime: LocalTime, endTime: LocalTime, purpose: String)
+            +getbooking() void
+            +hasConflict(roomId: String, date: LocalDate, start: LocalTime, end: LocalTime) boolean
+            +getBookingId() String
+            +getUserId() String
+            +getRoomId() String
+            +getDate() LocalDate
+            +getStartTime() LocalTime
+            +getEndTime() LocalTime
+            +getPurpose() String
+            +setRoomId(roomID: String) void
+            +setDate(date: LocalDate) void
+            +setStartTime(startTime: LocalTime) void
+            +setEndTime(endTime: LocalTime) void
+            +setPurpose(purpose: String) void
+        }
+    }
+
+    Application ..> CROBSGUI : launches
+    Application ..> CROBS : creates
+    CROBSGUI --|> JFrame : extends
+    CROBSGUI "1" *-- "1" CROBS : delegates commands
+    CROBS "1" *-- "1" UserOper
+    CROBS "1" *-- "1" RoomManager
+    CROBS "1" *-- "1" BookingManager
+    UserOper "1" *-- "1..*" User : manages
+    User "*" --> "1" Role : has role
+    RoomManager "1" *-- "0..*" Room : manages
+    BookingManager "1" *-- "0..*" Booking : stores
+    UserOper --> "0..1" BookingManager : cancels bookings
+    RoomManager "1" <--> "1" BookingManager : schedule & roomExists
+    RoomManager --> "1" UserOper : hasPermission
